@@ -34,11 +34,31 @@ Standard Maven layout under `src/main/java/com/example/demo/`. Entry point is `D
 
 ## Git Workflow
 
-**REQUIRED: After every file creation or meaningful code change, immediately commit and push to GitHub.** Do not wait, do not skip, do not batch. Every task ends with a commit and a push.
+**REQUIRED: Group related changes into a single, well-described commit, then push immediately.**
 
-- Commit as soon as a file is created or a meaningful change is complete
+### What belongs in one commit
+Group all changes that together deliver one coherent piece of functionality. If the user asks follow-up questions that extend the same feature (e.g. "add a GET endpoint" → "now fetch from DB" → "add error handling"), keep staging those changes and commit only when the feature is complete or the user signals a natural stopping point.
+
+- One feature / one fix / one refactor = one commit
+- Do not split a single feature across multiple commits
+- Do not bundle unrelated changes into one commit
+
+### When to commit and push
+- Commit when a logical unit of work is complete (not after every single file save)
 - Push immediately after every commit — never leave commits local
-- Use clear, descriptive commit messages in the imperative mood (e.g. `Add UserController with GET /users endpoint`, not `added stuff`)
+- If the user starts asking about a completely different feature, commit the current work first before starting the new one
+
+### Commit message format
+Use the imperative mood. The subject line should finish the sentence "This commit will…"
+
+- `Add GET /users endpoint with database fetch` — good
+- `Add UserController, UserService, and UserRepository for user listing` — good
+- `added stuff` — bad
+- `fix` — bad
+
+Example of changes that belong in ONE commit:
+> User asks → "create a GET /users endpoint" → "now query the database for real users" → "handle the case where the user is not found"
+> All three = one commit: `Add GET /users endpoint with DB fetch and 404 handling`
 
 ## Spring Security Note
 
