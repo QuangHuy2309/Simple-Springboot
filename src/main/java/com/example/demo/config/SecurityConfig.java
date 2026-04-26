@@ -180,6 +180,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers("/api/products/**").hasRole("ADMIN")
 
+                // User management is ADMIN-only (method-level @PreAuthorize is the second guard)
+                .requestMatchers("/api/users/**").hasRole("ADMIN")
+
                 // Everything else requires a valid JWT
                 .anyRequest().authenticated()
             )
