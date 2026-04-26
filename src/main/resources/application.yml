@@ -17,7 +17,7 @@ spring:
 app:
   jwt:
     secret: "OrderServiceSuperSecretKeyForJWT_MustBe256BitsOrMore_2024"
-    expiration-ms: 86400000      # 24 hours
+    expiration-ms: 300      # 5 minutes
 
   async:
     core-pool-size: 4

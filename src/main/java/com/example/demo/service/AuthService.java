@@ -8,6 +8,9 @@ import com.example.demo.enums.UserRole;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.TokenBlocklistService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +28,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenBlocklistService tokenBlocklistService;
 
     @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
@@ -70,5 +74,23 @@ public class AuthService {
                 .role(user.getRole())
                 .expiresIn(jwtTokenProvider.getExpirationMs())
                 .build();
+    }
+
+    /**
+     * Logout: revoke the current token by adding it to the blocklist.
+     *
+     * WHY WE NEED THE EXPIRY TIME:
+     *   The blocklist entry should be kept only until the token naturally expires —
+     *   after that, JwtTokenProvider.validateToken() rejects it on its own, so
+     *   the blocklist entry is just wasted memory.
+     *   We ask JwtTokenProvider for the token's expiry so the cleanup scheduler
+     *   can remove the entry at the right time (see TokenBlocklistService.purgeExpired).
+     *
+     * The token string itself is used as the map key.  In production with Redis,
+     * a shorter key (the "jti" — JWT ID — claim) is preferred to save memory.
+     */
+    public void logout(String token) {
+        long expiryMs = jwtTokenProvider.getExpirationTimeFromToken(token);
+        tokenBlocklistService.revoke(token, expiryMs);
     }
 }

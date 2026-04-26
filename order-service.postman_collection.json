@@ -79,6 +79,28 @@
             },
             "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
           }
+        },
+        {
+          "name": "Logout (revoke token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Clear the saved token after logout so subsequent requests are unauthenticated",
+                  "if (pm.response.code === 204) {",
+                  "  pm.collectionVariables.set('token', '');",
+                  "  console.log('Logged out — token cleared');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api","auth","logout"] }
+          }
         }
       ]
     },

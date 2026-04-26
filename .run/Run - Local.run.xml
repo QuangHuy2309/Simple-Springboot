@@ -1,0 +1,44 @@
+<!--
+  IntelliJ shared run configuration — committed to version control so every
+  team member gets the same launcher without manual setup.
+
+  Profile: local
+    • H2 in-memory database (no external DB needed)
+    • H2 console at http://localhost:8080/h2-console
+    • JPA / Spring Data repositories active
+    • DEBUG logging for com.example.demo.*
+    • Flyway runs both migration (V1) AND seed (V2) scripts
+
+  How to use:
+    1. Open the project in IntelliJ IDEA
+    2. This file appears automatically in the Run/Debug Configurations dropdown
+    3. Press the green Run button or Shift+F10
+-->
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false"
+                 name="Run — Local"
+                 type="SpringBootApplicationConfigurationType"
+                 factoryName="Spring Boot">
+
+    <!-- Fully-qualified main class -->
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.demo.DemoApplication"/>
+
+    <!-- Activates application-local.yml on top of application.yml -->
+    <option name="ACTIVE_PROFILES" value="local"/>
+
+    <!--
+      Module name must match the IntelliJ module (usually the Maven artifactId).
+      If IDEA shows "Module not found", open Project Structure → Modules
+      and replace "demo" with the displayed module name.
+    -->
+    <module name="demo"/>
+
+    <!-- JVM options: raise heap if you load large seed datasets -->
+    <option name="VM_PARAMETERS" value="-Xms256m -Xmx512m"/>
+
+    <!-- Run Maven compile before launch so the IDE catches compilation errors early -->
+    <method v="2">
+      <option name="Make" enabled="true"/>
+    </method>
+  </configuration>
+</component>
