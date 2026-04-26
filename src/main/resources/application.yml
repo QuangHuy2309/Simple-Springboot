@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: order-service
+
+  # Active profile is set via --spring.profiles.active=local|stage
+  profiles:
+    active: local
+
+  jpa:
+    open-in-view: false          # avoid lazy-load anti-pattern across HTTP layer
+    show-sql: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    secret: "OrderServiceSuperSecretKeyForJWT_MustBe256BitsOrMore_2024"
+    expiration-ms: 86400000      # 24 hours
+
+  async:
+    core-pool-size: 4
+    max-pool-size: 16
+    queue-capacity: 500
+    thread-name-prefix: "order-async-"
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    tags-sorter: alpha

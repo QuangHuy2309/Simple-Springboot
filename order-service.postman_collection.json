@@ -1,0 +1,288 @@
+{
+  "info": {
+    "name": "Order Service API",
+    "_postman_id": "order-service-001",
+    "description": "Complete collection for the Spring Boot Order Service demo.\n\nSetup:\n1. Run the app: ./mvnw spring-boot:run\n2. POST /api/auth/login → copy the token\n3. The collection uses a {{token}} variable — paste it in the collection Variables tab\n   OR use the auto-token script (see Auth/Login request Tests tab).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token",   "value": "",                      "type": "string" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "  console.log('Token saved:', json.token.substring(0,20) + '...');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          }
+        },
+        {
+          "name": "Login (alice / user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) pm.collectionVariables.set('token', json.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"user123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] }
+          }
+        },
+        {
+          "name": "Register new user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"pass1234\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","products"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search products by name",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/products?search=laptop&page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","products"],
+              "query": [
+                { "key": "search", "value": "laptop" },
+                { "key": "page",   "value": "0" },
+                { "key": "size",   "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get product by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api","products","1"] }
+          }
+        },
+        {
+          "name": "Create product (ADMIN)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gaming Chair\",\n  \"description\": \"Ergonomic gaming chair with lumbar support\",\n  \"price\": 349.99,\n  \"stock\": 25\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api","products"] }
+          }
+        },
+        {
+          "name": "Update product (ADMIN)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Gaming Chair Pro\",\n  \"description\": \"Updated description\",\n  \"price\": 379.99,\n  \"stock\": 20\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products/6", "host": ["{{baseUrl}}"], "path": ["api","products","6"] }
+          }
+        },
+        {
+          "name": "Delete product (ADMIN)",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/api/products/6", "host": ["{{baseUrl}}"], "path": ["api","products","6"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Place order",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.id) pm.collectionVariables.set('orderId', json.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Please ship ASAP\",\n  \"items\": [\n    { \"productId\": 1, \"quantity\": 1 },\n    { \"productId\": 2, \"quantity\": 2 }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api","orders"] }
+          }
+        },
+        {
+          "name": "My orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders/my?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders","my"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "All orders (ADMIN)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/orders?page=0&size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","orders"],
+              "query": [
+                { "key": "page", "value": "0" },
+                { "key": "size", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get order by ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}"] }
+          }
+        },
+        {
+          "name": "Advance to PROCESSING (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"status\": \"PROCESSING\" }" },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/status", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","status"] }
+          }
+        },
+        {
+          "name": "Advance to SHIPPED (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"status\": \"SHIPPED\" }" },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/status", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","status"] }
+          }
+        },
+        {
+          "name": "Advance to DELIVERED (ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"status\": \"DELIVERED\" }" },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/status", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","status"] }
+          }
+        },
+        {
+          "name": "Cancel order (owner or ADMIN)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"status\": \"CANCELLED\" }" },
+            "url": { "raw": "{{baseUrl}}/api/orders/{{orderId}}/status", "host": ["{{baseUrl}}"], "path": ["api","orders","{{orderId}}","status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dev Tools",
+      "item": [
+        {
+          "name": "Swagger UI",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/swagger-ui.html", "host": ["{{baseUrl}}"], "path": ["swagger-ui.html"] }
+          }
+        },
+        {
+          "name": "H2 Console (local only)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/h2-console", "host": ["{{baseUrl}}"], "path": ["h2-console"] }
+          }
+        },
+        {
+          "name": "OpenAPI spec (JSON)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/v3/api-docs", "host": ["{{baseUrl}}"], "path": ["v3","api-docs"] }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+# ─── LOCAL profile ───────────────────────────────────────────────
+# Uses H2 in-memory database so you can run without any external DB.
+# Flyway runs migrations on startup; if tables are missing they are created
+# and seed data is inserted automatically.
+spring:
+  datasource:
+    url: jdbc:h2:mem:orderdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  h2:
+    console:
+      enabled: true          # http://localhost:8080/h2-console
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed   # seed data only for local
+
+logging:
+  level:
+    root: INFO
+    com.example.demo: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+server:
+  port: 8080

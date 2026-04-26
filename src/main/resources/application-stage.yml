@@ -1,0 +1,32 @@
+# ─── STAGE profile ───────────────────────────────────────────────
+# Connects to a real PostgreSQL instance.
+# All sensitive values should be supplied via environment variables
+# so they are never committed to the repository.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/orderdb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:changeme}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate            # Flyway owns the schema; JPA only validates
+
+  flyway:
+    locations: classpath:db/migration   # no seed data in stage
+
+logging:
+  level:
+    root: WARN
+    com.example.demo: INFO
+
+server:
+  port: ${PORT:8080}
