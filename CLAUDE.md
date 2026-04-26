@@ -62,6 +62,25 @@ Example of changes that belong in ONE commit:
 > User asks → "create a GET /users endpoint" → "now query the database for real users" → "handle the case where the user is not found"
 > All three = one commit: `Add GET /users endpoint with DB fetch and 404 handling`
 
+## Granted Permissions
+
+The following actions are pre-approved — Claude does **not** need to ask for confirmation before taking them:
+
+| Action | Scope |
+|---|---|
+| `git add` | Any tracked source file in this repo |
+| `git commit` | Follow the commit message format defined above |
+| `git push` | To `origin main` only |
+| Create / edit / delete source files | Under `src/`, `pom.xml`, `.run/`, `*.yml`, `*.sql`, `*.json` |
+| Run `./mvnw package -DskipTests` | To verify a build after changes |
+| Run `./mvnw test` | To run the test suite |
+
+Actions that still require explicit user confirmation before proceeding:
+- Force-push (`git push --force`)
+- Deleting branches
+- Any action targeting a remote other than `origin`
+- Modifying `.github/`, `CODEOWNERS`, or CI/CD pipeline files
+
 ## Spring Security Note
 
 Because `spring-boot-starter-security` is on the classpath with no custom `SecurityFilterChain` bean, Spring Boot auto-configures HTTP Basic auth and generates a random password on startup. Add a `@Configuration` class with a `SecurityFilterChain` bean to override this before exposing any endpoints.
