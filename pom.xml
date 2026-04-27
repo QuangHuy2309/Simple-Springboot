@@ -45,6 +45,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- ── AOP (logging aspect) ── -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+		</dependency>
+
 		<!-- ── Database drivers ── -->
 		<!-- H2: local profile only -->
 		<dependency>
