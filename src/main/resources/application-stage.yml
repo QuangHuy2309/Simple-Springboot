@@ -16,7 +16,6 @@ spring:
       max-lifetime: 1800000
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate            # Flyway owns the schema; JPA only validates
 
@@ -26,7 +25,7 @@ spring:
 logging:
   level:
     root: WARN
-    com.example.demo: INFO
+    com.example.demo: DEBUG
 
 server:
   port: ${PORT:8080}
