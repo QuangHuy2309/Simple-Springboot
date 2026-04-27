@@ -6,6 +6,13 @@ spring:
   profiles:
     active: local
 
+  # Default datasource: H2 in-memory (overridden by application-stage.yml for PostgreSQL)
+  datasource:
+    url: jdbc:h2:mem:orderdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
   jpa:
     open-in-view: false          # avoid lazy-load anti-pattern across HTTP layer
     show-sql: false
