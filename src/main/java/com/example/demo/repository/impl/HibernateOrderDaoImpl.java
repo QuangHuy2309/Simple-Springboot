@@ -2,7 +2,7 @@ package com.example.demo.repository.impl;
 
 import com.example.demo.entity.Order;
 import com.example.demo.repository.OrderDao;
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -61,13 +61,18 @@ import java.util.Optional;
 @Slf4j
 @Repository
 @Profile("stage")
-@RequiredArgsConstructor
 public class HibernateOrderDaoImpl implements OrderDao {
 
     // SessionFactory is a heavyweight, thread-safe, application-scoped object.
-    // It is created once at startup (configured in HibernateConfig) and reused.
-    // Session (individual connection/cache unit) is created per transaction.
+    // Obtained by unwrapping the JPA EntityManagerFactory so it shares the same
+    // HikariCP pool and transaction manager — registering it as a separate Spring
+    // bean would trigger @ConditionalOnMissingBean(SessionFactory.class) in Spring
+    // Boot 4.x's HibernateJpaAutoConfiguration and suppress entityManagerFactory.
     private final SessionFactory sessionFactory;
+
+    public HibernateOrderDaoImpl(EntityManagerFactory emf) {
+        this.sessionFactory = emf.unwrap(SessionFactory.class);
+    }
 
     /**
      * Load an order together with its items and products in a single SQL query.
